@@ -7,6 +7,7 @@ import '../model/post.dart';
 import '../service/storage_service.dart';
 import '../theme/common_dimens.dart';
 import '../util/context_extension.dart';
+import '../util/time_utils.dart';
 import '../widget/post_card.dart';
 import '../widget/post_input_bar.dart';
 import '../widget/theme_text.dart';
@@ -212,7 +213,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
     final endOffset = _getPostCenter(_targetPostId);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('トキログ')),
+      appBar: AppBar(title: Text(context.l10n.tokiLog)),
       body: Column(
         children: [
           PostInputBar(key: _inputBarKey, onSubmitted: _addPost),
@@ -221,7 +222,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Row(
                 children: [
-                  const Expanded(child: Text('Replying to post...')),
+                  Expanded(child: Text(context.l10n.replying)),
                   IconButton(
                     icon: const Icon(Icons.close, size: 18),
                     onPressed: () => setState(() => _replyingToPostId = null),
@@ -232,7 +233,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
           Divider(
             height: 1,
             thickness: 1,
-            color: Theme.of(context).colorScheme.outlineVariant,
+            color: context.colors.outlineVariant,
           ),
           Expanded(
             child: _isLoading
@@ -248,12 +249,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
                           if (item is DateTime) {
                             return Container(
                               padding: EdgeInsetsConst.x0_75().withY0_25(),
-                              color: context.colorScheme.secondaryContainer,
+                              color: context.colors.secondaryContainer,
                               child: LabelMediumText(
-                                '${item.year}/${item.month}/${item.day}',
+                                TimeUtils.dateFormat.format(item),
                                 style: TextStyle(
-                                  color:
-                                      context.colorScheme.onSecondaryContainer,
+                                  color: context.colors.onSecondaryContainer,
                                 ),
                               ),
                             );

@@ -11,7 +11,6 @@ class DurationTooltip extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final colorScheme = context.colorScheme;
     return Material(
       elevation: 4,
       borderRadius: BorderRadiusConst.br1().copyWith(
@@ -20,7 +19,7 @@ class DurationTooltip extends StatelessWidget {
       child: Container(
         padding: EdgeInsetsConst.y0_5().withX0_75(),
         decoration: BoxDecoration(
-          color: colorScheme.primary,
+          color: context.colors.primary,
           borderRadius: BorderRadiusConst.br1().copyWith(
             topLeft: RadiusConst.r0_25(),
           ),
@@ -30,13 +29,13 @@ class DurationTooltip extends StatelessWidget {
           children: [
             Icon(
               Icons.schedule,
-              color: colorScheme.onPrimary,
+              color: context.colors.onPrimary,
               size: StyleValue.v1,
             ),
             FixedSpacer.w0_25(),
             Text(
-              formatDuration(duration),
-              style: TextStyle(color: colorScheme.onPrimary),
+              TimeUtils.formatDuration(duration),
+              style: TextStyle(color: context.colors.onPrimary),
             ),
           ],
         ),

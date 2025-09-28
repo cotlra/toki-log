@@ -1,0 +1,4 @@
+synthetic-package: false
+output-dir: lib/l10n/gen
+arb-dir: lib/l10n/src
+template-arb-file: app_ja.arb

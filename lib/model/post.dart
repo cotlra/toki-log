@@ -1,14 +1,19 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
+
+part 'post.freezed.dart';
+part 'post.g.dart';
 
 const _uuid = Uuid();
 
-class Post {
-  Post({
-    required this.id,
-    required this.content,
-    required this.createdAt,
-    this.parentId,
-  });
+@freezed
+abstract class Post with _$Post {
+  const factory Post({
+    required final String id,
+    required final String content,
+    required final DateTime createdAt,
+    required final String? parentId,
+  }) = _Post;
 
   factory Post.create({
     required final String content,
@@ -22,26 +27,8 @@ class Post {
     );
   }
 
-  factory Post.fromJson(final Map<String, dynamic> json) {
-    return Post(
-      id: json['id'] as String,
-      content: json['content'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      parentId: json['parentId'] as String?,
-    );
-  }
+  const Post._();
 
-  String id;
-  String content;
-  DateTime createdAt;
-  String? parentId;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'content': content,
-      'createdAt': createdAt.toIso8601String(),
-      'parentId': parentId,
-    };
-  }
+  factory Post.fromJson(final Map<String, dynamic> json) =>
+      _$PostFromJson(json);
 }

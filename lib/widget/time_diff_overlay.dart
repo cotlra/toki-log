@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../util/context_extension.dart';
+
 class TimeDiffOverlay extends StatelessWidget {
   const TimeDiffOverlay({required this.start, required this.end, super.key});
 
@@ -14,8 +16,7 @@ class TimeDiffOverlay extends StatelessWidget {
         painter: _TimeDiffPainter(
           start: start,
           end: end,
-          color: Theme.of(context).colorScheme.primary,
-          // color: Theme.of(context).primaryColor,
+          color: context.colors.primary,
         ),
         size: Size.infinite,
       ),

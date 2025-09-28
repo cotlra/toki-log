@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../model/post.dart';
 import '../theme/common_dimens.dart';
+import '../util/context_extension.dart';
+import '../util/time_utils.dart';
+import 'theme_text.dart';
 
 class PostCard extends StatelessWidget {
   const PostCard({
@@ -21,17 +23,13 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(post.createdAt);
+    final formattedDate = TimeUtils.dateTimeFormat.format(post.createdAt);
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: isReplying
-            ? Theme.of(context).colorScheme.surfaceContainer
-            : null,
+        color: isReplying ? context.colors.surfaceContainer : null,
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
+          bottom: BorderSide(color: context.colors.outlineVariant),
         ),
       ),
       child: Padding(
@@ -40,7 +38,7 @@ class PostCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               left: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
+                color: context.colors.outlineVariant,
                 width: level == 0 ? 0 : StyleValue.v0_75,
               ),
             ),
@@ -52,19 +50,13 @@ class PostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  post.content,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 8),
+                BodyLargeText(post.content),
+                FixedSpacer.h0_5(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      formattedDate,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    const SizedBox(width: 8),
+                    BodySmallText(formattedDate),
+                    FixedSpacer.w0_5(),
                     IconButton(
                       icon: const Icon(Icons.reply, size: 18),
                       onPressed: onReplyPressed != null
@@ -72,7 +64,7 @@ class PostCard extends StatelessWidget {
                           : null,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      tooltip: '返信',
+                      tooltip: context.l10n.reply,
                     ),
                   ],
                 ),
