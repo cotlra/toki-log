@@ -139,6 +139,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
         setState(() {
           _isCtrlPressed = true;
           _basePostId = _hoveredPostId;
+          _targetPostId = _hoveredPostId;
         });
       } else if (event is KeyUpEvent && _isCtrlPressed) {
         setState(() {
@@ -146,6 +147,13 @@ class _TimelineScreenState extends State<TimelineScreen> {
           _basePostId = null;
           _targetPostId = null;
         });
+      }
+    } else if (event.logicalKey == LogicalKeyboardKey.slash) {
+      if (event is KeyDownEvent) {
+        if (!_inputFocusNode.hasFocus) {
+          _inputFocusNode.requestFocus();
+          return true;
+        }
       }
     }
     return false;
@@ -203,8 +211,8 @@ class _TimelineScreenState extends State<TimelineScreen> {
     final duration = targetPost.createdAt.difference(basePost.createdAt).abs();
 
     return Positioned(
-      left: endOffset.dx + 20,
-      top: endOffset.dy - 15,
+      left: endOffset.dx + StyleValue.v1,
+      top: endOffset.dy,
       child: IgnorePointer(child: DurationTooltip(duration: duration)),
     );
   }
@@ -224,16 +232,19 @@ class _TimelineScreenState extends State<TimelineScreen> {
             focusNode: _inputFocusNode,
           ),
           if (_replyingToPostId != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
-                children: [
-                  Expanded(child: Text(context.l10n.replying)),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 18),
-                    onPressed: () => setState(() => _replyingToPostId = null),
-                  ),
-                ],
+            ColoredBox(
+              color: context.colors.surfaceContainerHigh,
+              child: Padding(
+                padding: EdgeInsetsConst.x1().withY0_25(),
+                child: Row(
+                  children: [
+                    Expanded(child: Text(context.l10n.replying)),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 18),
+                      onPressed: () => setState(() => _replyingToPostId = null),
+                    ),
+                  ],
+                ),
               ),
             ),
           Divider(
