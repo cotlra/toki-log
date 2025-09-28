@@ -1,0 +1,40 @@
+name: toki_log
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  uuid: ^4.5.1
+
+dev_dependencies:
+  build_runner: ^2.8.0
+  flutter_gen_runner: ^5.12.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: MPlus
+      fonts:
+        - asset: asset/font/m_plus/MPLUSRounded1c-Regular.ttf
+        - asset: asset/font/m_plus/MPLUSRounded1c-Medium.ttf
+          weight: 500
+        - asset: asset/font/m_plus/MPLUSRounded1c-Bold.ttf
+          weight: 600
+        - asset: asset/font/m_plus/MPLUSRounded1c-Bold.ttf
+          weight: 700
+        - asset: asset/font/m_plus/MPLUSRounded1c-Bold.ttf
+          weight: 800
+        - asset: asset/font/m_plus/MPLUSRounded1c-Bold.ttf
+          weight: 900
