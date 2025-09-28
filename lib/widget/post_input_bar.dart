@@ -2,10 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../util/context_extension.dart';
+
 class PostInputBar extends StatefulWidget {
-  const PostInputBar({required this.onSubmitted, super.key});
+  const PostInputBar({required this.onSubmitted, super.key, this.focusNode});
 
   final void Function(String) onSubmitted;
+  final FocusNode? focusNode;
 
   @override
   State<PostInputBar> createState() => PostInputBarState();
@@ -13,18 +16,21 @@ class PostInputBar extends StatefulWidget {
   @override
   void debugFillProperties(final DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      ObjectFlagProperty<void Function(String p1)>.has(
-        'onSubmitted',
-        onSubmitted,
-      ),
-    );
+    properties
+      ..add(
+        ObjectFlagProperty<void Function(String p1)>.has(
+          'onSubmitted',
+          onSubmitted,
+        ),
+      )
+      ..add(DiagnosticsProperty<FocusNode?>('focusNode', focusNode));
   }
 }
 
 class PostInputBarState extends State<PostInputBar> {
   final _textController = TextEditingController();
-  final _focusNode = FocusNode();
+  late final _focusNode = FocusNode();
+  late final _inputFocusNode = widget.focusNode ?? FocusNode();
   var _isCtrlPressed = false;
 
   void submit() {
@@ -66,11 +72,12 @@ class PostInputBarState extends State<PostInputBar> {
                 }
               },
               child: TextField(
+                focusNode: _inputFocusNode,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 controller: _textController,
-                decoration: const InputDecoration(
-                  hintText: 'いま何してる？',
+                decoration: InputDecoration(
+                  hintText: context.l10n.whatAreYouDoing,
                   border: InputBorder.none,
                 ),
                 onSubmitted: (_) => submit(),

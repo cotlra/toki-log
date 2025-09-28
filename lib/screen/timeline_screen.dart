@@ -47,6 +47,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   final Map<String, GlobalKey> _postKeys = {};
   final GlobalKey _stackKey = GlobalKey();
   final GlobalKey<PostInputBarState> _inputBarKey = GlobalKey();
+  final _inputFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -113,6 +114,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   void _handleReply(final String postId) {
     setState(() {
       _replyingToPostId = (_replyingToPostId == postId) ? null : postId;
+      _inputFocusNode.requestFocus();
     });
   }
 
@@ -216,7 +218,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
       appBar: AppBar(title: Text(context.l10n.tokiLog)),
       body: Column(
         children: [
-          PostInputBar(key: _inputBarKey, onSubmitted: _addPost),
+          PostInputBar(
+            key: _inputBarKey,
+            onSubmitted: _addPost,
+            focusNode: _inputFocusNode,
+          ),
           if (_replyingToPostId != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
