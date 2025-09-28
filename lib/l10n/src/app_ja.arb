@@ -1,6 +1,11 @@
 {
   "tokiLog": "トキログ",
-  "reply": "返信",
+  "reply": "返信する",
   "whatAreYouDoing": "今何してる？",
-  "replying": "返信中…"
+  "replying": "返信中…",
+  "deletePost": "投稿を削除",
+  "deletePostConfirmation": "投稿を削除しますか？",
+  "delete": "削除する",
+  "cancel": "キャンセル",
+  "thisPostIsDeleted": "この投稿は削除されました"
 }

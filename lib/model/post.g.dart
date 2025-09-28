@@ -11,6 +11,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
   content: json['content'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   parentId: json['parentId'] as String?,
+  isDeleted: json['isDeleted'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
@@ -18,4 +19,5 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
   'content': instance.content,
   'createdAt': instance.createdAt.toIso8601String(),
   'parentId': instance.parentId,
+  'isDeleted': instance.isDeleted,
 };

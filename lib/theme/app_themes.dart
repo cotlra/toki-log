@@ -23,6 +23,9 @@ abstract final class AppThemes {
       useMaterial3: true,
       colorScheme: scheme,
       fontFamily: FontFamily.mPlus,
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(color: Color(0xFF777777)),
+      ),
     );
   }
 }

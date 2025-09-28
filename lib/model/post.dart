@@ -13,6 +13,7 @@ abstract class Post with _$Post {
     required final String content,
     required final DateTime createdAt,
     required final String? parentId,
+    @Default(false) final bool isDeleted,
   }) = _Post;
 
   factory Post.create({

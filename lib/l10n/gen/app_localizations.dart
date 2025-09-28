@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @reply.
   ///
   /// In ja, this message translates to:
-  /// **'返信'**
+  /// **'返信する'**
   String get reply;
 
   /// No description provided for @whatAreYouDoing.
@@ -117,6 +117,36 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'返信中…'**
   String get replying;
+
+  /// No description provided for @deletePost.
+  ///
+  /// In ja, this message translates to:
+  /// **'投稿を削除'**
+  String get deletePost;
+
+  /// No description provided for @deletePostConfirmation.
+  ///
+  /// In ja, this message translates to:
+  /// **'投稿を削除しますか？'**
+  String get deletePostConfirmation;
+
+  /// No description provided for @delete.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除する'**
+  String get delete;
+
+  /// No description provided for @cancel.
+  ///
+  /// In ja, this message translates to:
+  /// **'キャンセル'**
+  String get cancel;
+
+  /// No description provided for @thisPostIsDeleted.
+  ///
+  /// In ja, this message translates to:
+  /// **'この投稿は削除されました'**
+  String get thisPostIsDeleted;
 }
 
 class _AppLocalizationsDelegate

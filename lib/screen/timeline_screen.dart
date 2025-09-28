@@ -59,6 +59,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   @override
   void dispose() {
     HardwareKeyboard.instance.removeHandler(_handleRawKeyEvent);
+    _inputFocusNode.dispose();
     super.dispose();
   }
 
@@ -70,6 +71,27 @@ class _TimelineScreenState extends State<TimelineScreen> {
       _buildTimelineItems();
       _isLoading = false;
     });
+  }
+
+  bool _hasVisibleDescendants(
+    final String postId,
+    final Map<String?, List<Post>> postsByParent,
+  ) {
+    final children = postsByParent[postId] ?? [];
+    if (children.isEmpty) {
+      return false;
+    }
+
+    for (final child in children) {
+      if (!child.isDeleted) {
+        return true;
+      }
+      if (_hasVisibleDescendants(child.id, postsByParent)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   void _buildTimelineItems() {
@@ -91,6 +113,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
     void addPosts(final List<Post> posts, final int level) {
       for (final post in posts) {
+        // If the post is deleted and has no visible descendants, skip it.
+        if (post.isDeleted && !_hasVisibleDescendants(post.id, postsByParent)) {
+          continue;
+        }
+
         if (level == 0) {
           final postDate = DateUtils.dateOnly(post.createdAt);
           if (lastDate == null || !DateUtils.isSameDay(postDate, lastDate)) {
@@ -114,7 +141,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
   void _handleReply(final String postId) {
     setState(() {
       _replyingToPostId = (_replyingToPostId == postId) ? null : postId;
-      _inputFocusNode.requestFocus();
+      if (_replyingToPostId != null) {
+        _inputFocusNode.requestFocus();
+      }
     });
   }
 
@@ -126,6 +155,47 @@ class _TimelineScreenState extends State<TimelineScreen> {
       _postsById[newPost.id] = newPost;
       _buildTimelineItems();
       _replyingToPostId = null;
+    });
+
+    await _storageService.writePosts(_posts);
+  }
+
+  Future<void> _handleDeletePost(final String postId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (final context) => AlertDialog(
+        title: Text(context.l10n.deletePost),
+        content: Text(context.l10n.deletePostConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
+            child: Text(context.l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed ?? false) {
+      await _markPostAsDeleted(postId);
+    }
+  }
+
+  Future<void> _markPostAsDeleted(final String postId) async {
+    setState(() {
+      final post = _postsById[postId];
+      if (post != null) {
+        final deletedPost = post.copyWith(isDeleted: true);
+        _postsById[postId] = deletedPost;
+        _posts = _posts
+            .map((final p) => p.id == postId ? deletedPost : p)
+            .toList();
+        _buildTimelineItems();
+      }
     });
 
     await _storageService.writePosts(_posts);
@@ -284,6 +354,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                                 post: item.post,
                                 isReplying: item.post.id == _replyingToPostId,
                                 onReplyPressed: _handleReply,
+                                onDeletePressed: _handleDeletePost,
                                 level: item.level,
                               ),
                             );
