@@ -33,6 +33,12 @@ class PostInputBarState extends State<PostInputBar> {
   late final _inputFocusNode = widget.focusNode ?? FocusNode();
   var _isCtrlPressed = false;
 
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
   void submit() {
     final text = _textController.text.trim();
     if (text.isNotEmpty) {
@@ -47,16 +53,14 @@ class PostInputBarState extends State<PostInputBar> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border(
-          top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
-        ),
+        border: Border(top: BorderSide(color: context.colors.outlineVariant)),
       ),
       child: Row(
         children: [
           Expanded(
-            child: KeyboardListener(
+            child: Focus(
               focusNode: _focusNode,
-              onKeyEvent: (final event) {
+              onKeyEvent: (final focus, final event) {
                 if (event.logicalKey == LogicalKeyboardKey.controlLeft ||
                     event.logicalKey == LogicalKeyboardKey.controlRight ||
                     event.logicalKey == LogicalKeyboardKey.meta) {
@@ -68,8 +72,10 @@ class PostInputBarState extends State<PostInputBar> {
                 } else if (event.logicalKey == LogicalKeyboardKey.enter) {
                   if (event is KeyDownEvent && _isCtrlPressed) {
                     submit();
+                    return KeyEventResult.handled;
                   }
                 }
+                return KeyEventResult.ignored;
               },
               child: TextField(
                 focusNode: _inputFocusNode,
@@ -88,11 +94,5 @@ class PostInputBarState extends State<PostInputBar> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
   }
 }
