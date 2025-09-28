@@ -5,8 +5,11 @@ import 'package:flutter/services.dart';
 
 import '../model/post.dart';
 import '../service/storage_service.dart';
+import '../theme/common_dimens.dart';
+import '../util/context_extension.dart';
 import '../widget/post_card.dart';
 import '../widget/post_input_bar.dart';
+import '../widget/theme_text.dart';
 import '../widget/time_diff_overlay.dart';
 import '../widget/time_tooltip.dart';
 
@@ -30,7 +33,8 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
   List<Post> _posts = []; // Master list of all posts
   Map<String, Post> _postsById = {}; // For quick lookup
-  List<_TimelineItem> _timelineItems = []; // Flattened list for rendering
+  List<Object> _listItems =
+      []; // Can hold _TimelineItem or DateTime for headers
   var _isLoading = true;
   String? _replyingToPostId;
 
@@ -67,7 +71,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   }
 
   void _buildTimelineItems() {
-    final items = <_TimelineItem>[];
+    final items = <Object>[];
     final postsByParent = <String?, List<Post>>{};
     for (final post in _posts) {
       postsByParent.putIfAbsent(post.parentId, () => []).add(post);
@@ -81,8 +85,18 @@ class _TimelineScreenState extends State<TimelineScreen> {
     final rootPosts = postsByParent[null] ?? []
       ..sort((final a, final b) => b.createdAt.compareTo(a.createdAt));
 
+    DateTime? lastDate;
+
     void addPosts(final List<Post> posts, final int level) {
       for (final post in posts) {
+        if (level == 0) {
+          final postDate = DateUtils.dateOnly(post.createdAt);
+          if (lastDate == null || !DateUtils.isSameDay(postDate, lastDate)) {
+            items.add(postDate); // Add date object as a header item
+            lastDate = postDate;
+          }
+        }
+
         items.add(_TimelineItem(post, level));
         final replies = postsByParent[post.id] ?? [];
         if (replies.isNotEmpty) {
@@ -92,7 +106,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
     }
 
     addPosts(rootPosts, 0);
-    _timelineItems = items;
+    _listItems = items;
   }
 
   void _handleReply(final String postId) {
@@ -183,7 +197,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       return const SizedBox.shrink();
     }
 
-    final duration = targetPost.createdAt.difference(basePost.createdAt);
+    final duration = targetPost.createdAt.difference(basePost.createdAt).abs();
 
     return Positioned(
       left: endOffset.dx + 20,
@@ -227,19 +241,38 @@ class _TimelineScreenState extends State<TimelineScreen> {
                     key: _stackKey,
                     children: [
                       ListView.builder(
-                        itemCount: _timelineItems.length,
+                        itemCount: _listItems.length,
                         itemBuilder: (final context, final index) {
-                          final item = _timelineItems[index];
-                          return MouseRegion(
-                            onEnter: (_) => _onPostEnter(item.post.id),
-                            child: PostCard(
-                              key: _postKeys[item.post.id],
-                              post: item.post,
-                              isReplying: item.post.id == _replyingToPostId,
-                              onReplyPressed: _handleReply,
-                              level: item.level,
-                            ),
-                          );
+                          final item = _listItems[index];
+
+                          if (item is DateTime) {
+                            return Container(
+                              padding: EdgeInsetsConst.x0_75().withY0_25(),
+                              color: context.colorScheme.secondaryContainer,
+                              child: LabelMediumText(
+                                '${item.year}/${item.month}/${item.day}',
+                                style: TextStyle(
+                                  color:
+                                      context.colorScheme.onSecondaryContainer,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (item is _TimelineItem) {
+                            return MouseRegion(
+                              onEnter: (_) => _onPostEnter(item.post.id),
+                              child: PostCard(
+                                key: _postKeys[item.post.id],
+                                post: item.post,
+                                isReplying: item.post.id == _replyingToPostId,
+                                onReplyPressed: _handleReply,
+                                level: item.level,
+                              ),
+                            );
+                          }
+
+                          return const SizedBox.shrink();
                         },
                       ),
                       if (_isCtrlPressed)
