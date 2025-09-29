@@ -160,6 +160,12 @@ class _TimelineScreenState extends State<TimelineScreen> {
     await _storageService.writePosts(_posts);
   }
 
+  Future<void> _handleEditPost(final (String, String) data) async {
+    final (postId, newContent) = data;
+    await _storageService.updatePost(postId, newContent);
+    await _loadPosts(); // Reload posts to reflect changes
+  }
+
   Future<void> _handleDeletePost(final String postId) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -354,6 +360,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                                 post: item.post,
                                 isReplying: item.post.id == _replyingToPostId,
                                 onReplyPressed: _handleReply,
+                                onEditSave: _handleEditPost,
                                 onDeletePressed: _handleDeletePost,
                                 level: item.level,
                               ),

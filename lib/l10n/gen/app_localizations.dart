@@ -147,6 +147,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'この投稿は削除されました'**
   String get thisPostIsDeleted;
+
+  /// No description provided for @edit.
+  ///
+  /// In ja, this message translates to:
+  /// **'編集'**
+  String get edit;
+
+  /// No description provided for @save.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存'**
+  String get save;
 }
 
 class _AppLocalizationsDelegate

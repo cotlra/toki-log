@@ -39,4 +39,24 @@ class StorageService {
     final json = posts.map((final e) => e.toJson()).toList();
     return file.writeAsString(jsonEncode(json));
   }
+
+  Future<void> updatePost(final String postId, final String newContent) async {
+    final posts = await readPosts();
+    final index = posts.indexWhere((final p) => p.id == postId);
+    if (index != -1) {
+      final oldPost = posts[index];
+      final newPost = oldPost.copyWith(content: newContent);
+      posts[index] = newPost;
+      await writePosts(posts);
+    }
+  }
+
+  Future<void> deletePost(final String postId) async {
+    final posts = await readPosts();
+    final index = posts.indexWhere((final p) => p.id == postId);
+    if (index != -1) {
+      posts[index] = posts[index].copyWith(isDeleted: true);
+      await writePosts(posts);
+    }
+  }
 }

@@ -34,4 +34,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get thisPostIsDeleted => 'この投稿は削除されました';
+
+  @override
+  String get edit => '編集';
+
+  @override
+  String get save => '保存';
 }

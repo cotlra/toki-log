@@ -7,5 +7,7 @@
   "deletePostConfirmation": "投稿を削除しますか？",
   "delete": "削除する",
   "cancel": "キャンセル",
-  "thisPostIsDeleted": "この投稿は削除されました"
+  "thisPostIsDeleted": "この投稿は削除されました",
+  "edit": "編集",
+  "save": "保存"
 }
